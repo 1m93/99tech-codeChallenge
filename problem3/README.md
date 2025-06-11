@@ -1,0 +1,2 @@
+- For all problems of old file: Please check all comments in old.tsx
+- For new file after being refactored: Please check new.tsx
