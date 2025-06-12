@@ -118,7 +118,10 @@ const CurrencyFormItem: React.FC<CurrencyFormItemProps> = ({
 				) {
 					const firstValidOtherItem = currentValues.find(
 						(otherItem, i) =>
-							otherItem.amount != null && otherItem.currency && index !== i
+							otherItem.amount != null &&
+							otherItem.amount.toString() !== '' &&
+							otherItem.currency &&
+							index !== i
 					);
 
 					if (!firstValidOtherItem) return;
