@@ -109,14 +109,47 @@ const CurrencyFormItem: React.FC<CurrencyFormItemProps> = ({
 
 			if (type === 'currency') {
 				updateOtherItemsOnUpdateCurrency(value);
+
+				const currentValues = watch('convertItems');
+
+				if (
+					currentValues[index]?.amount == null ||
+					currentValues[index]?.amount?.toString() === ''
+				) {
+					const firstValidOtherItem = currentValues.find(
+						(otherItem, i) =>
+							otherItem.amount != null && otherItem.currency && index !== i
+					);
+
+					if (!firstValidOtherItem) return;
+
+					const otherItemPrice = parseCurrencyValue(
+						firstValidOtherItem.currency
+					);
+
+					if (
+						!Number.isNaN(otherItemPrice) &&
+						firstValidOtherItem.amount != null
+					) {
+						setValue(
+							`convertItems.${index}.amount`,
+							calculateConvertedAmount(
+								firstValidOtherItem.amount,
+								otherItemPrice,
+								parseCurrencyValue(value)
+							)
+						);
+					}
+				}
 			} else {
 				updateOtherItemsOnUpdateAmount(value);
 			}
 		},
 		[
-			index,
 			setValue,
+			index,
 			updateOtherItemsOnUpdateCurrency,
+			watch,
 			updateOtherItemsOnUpdateAmount,
 		]
 	);

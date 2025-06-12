@@ -3,7 +3,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import type { CurrencyConverterForm } from '@/types/currencyConverter';
 import useCurrencyStore from '@/stores/currency';
 import CurrencyFormItem from '@/components/molecules/CurrencyFormItem';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { getCurrencyOptionValue, getFullDate } from '@/utils/common';
 import Button from '@/components/atoms/Button';
 import AddIcon from '@/assets/icons/add.svg?react';
@@ -13,6 +13,7 @@ import Logo from '@/assets/logo.svg?react';
 const CurrencyForm: React.FC = () => {
 	const { fetchCurrencyData } = useGetCurrencyData();
 	const { currencyData, lastUpdate } = useCurrencyStore();
+	const isFirstTimeInitData = useRef<boolean>(true);
 
 	const form = useForm<CurrencyConverterForm>({
 		defaultValues: {
@@ -23,12 +24,16 @@ const CurrencyForm: React.FC = () => {
 
 	useEffect(() => {
 		if (currencyData.length > 2) {
-			form.reset({
-				convertItems: [
-					{ currency: getCurrencyOptionValue(currencyData[0]) },
-					{ currency: getCurrencyOptionValue(currencyData[1]) },
-				],
-			});
+			if (isFirstTimeInitData.current) {
+				form.reset({
+					convertItems: [
+						{ currency: getCurrencyOptionValue(currencyData[0]) },
+						{ currency: getCurrencyOptionValue(currencyData[1]) },
+					],
+				});
+
+				isFirstTimeInitData.current = false;
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currencyData]);
